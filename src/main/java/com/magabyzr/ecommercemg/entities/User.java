@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Setter
 @Getter
 @AllArgsConstructor
@@ -19,7 +18,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "name")
@@ -31,7 +30,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
 
@@ -45,31 +44,8 @@ public class User {
         address.setUser(null);
     }
 
-    public void addTag(String tagName) {
-        var tag = new Tag(tagName);
-        tags.add(tag);
-        tag.getUsers().add(this);
-    }
-
-    public void removeTag(String tagName) {
-        var tag = new Tag(tagName);
-        tags.remove(tag);
-        tag.getUsers().remove(this);
-    }
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_tags",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    @Builder.Default
-    private Set<Tag> tags = new HashSet<>();
-
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Profile profile;
-
 
     @ManyToMany
     @JoinTable(
@@ -77,13 +53,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Product> wishlist = new HashSet<>();
+    private Set<Product> favoriteProducts = new HashSet<>();
 
     public void addFavoriteProduct(Product product) {
-
+        favoriteProducts.add(product);
     }
 
-    //To avoid lazy loading from the @ToString annotation.
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" +
@@ -92,4 +67,3 @@ public class User {
                 "email = " + email + ")";
     }
 }
-
