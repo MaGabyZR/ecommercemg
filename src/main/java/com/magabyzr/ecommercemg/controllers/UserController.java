@@ -1,0 +1,19 @@
+package com.magabyzr.ecommercemg.controllers;
+
+import com.magabyzr.ecommercemg.entities.User;
+import com.magabyzr.ecommercemg.repositories.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RestController
+@AllArgsConstructor
+public class UserController {
+    private final UserRepository userRepository;
+
+    @GetMapping("/users")                                 //to expose it, it is the same as RequestMapping
+    public Iterable<User> getAllUsers() {                   //Iterable is the parent of List<>
+        return userRepository.findAll();
+    }
+}
