@@ -43,4 +43,10 @@ public class UserController {
 
         return ResponseEntity.ok(userMapper.toDto(user));
     }
+
+    //to accept POST requests.
+    @PostMapping
+    public UserDto createUser(@RequestBody UserDto data){
+        return data;
+    }
 }
