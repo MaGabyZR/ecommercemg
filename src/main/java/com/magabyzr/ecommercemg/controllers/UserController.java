@@ -18,10 +18,13 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @GetMapping                                                                          //to expose it, it is the same as RequestMapping
-    public Iterable<UserDto> getAllUsers(                                                  //Iterable is the parent of List<>
+    @GetMapping                                                                                         //to expose it, it is the same as RequestMapping
+    public Iterable<UserDto> getAllUsers(                                                                  //Iterable is the parent of List<>
+            //@RequestHeader(required = false, name = "x-auth-token") String authToken,
             @RequestParam(required = false, defaultValue = "", name = "sort") String sort                //Set it to false, to make it optional.
     ) {
+        //System.out.println(authToken);
+
         if (!Set.of("name", "email").contains(sort))
             sort = "name";
 
