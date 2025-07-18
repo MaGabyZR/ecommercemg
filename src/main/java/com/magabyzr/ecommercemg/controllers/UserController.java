@@ -1,5 +1,6 @@
 package com.magabyzr.ecommercemg.controllers;
 
+import com.magabyzr.ecommercemg.dtos.RegisterUserRequest;
 import com.magabyzr.ecommercemg.dtos.UserDto;
 import com.magabyzr.ecommercemg.mappers.UserMapper;
 import com.magabyzr.ecommercemg.repositories.UserRepository;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Set;
 
@@ -46,7 +48,16 @@ public class UserController {
 
     //to accept POST requests.
     @PostMapping
-    public UserDto createUser(@RequestBody UserDto data){
-        return data;
+    public ResponseEntity<UserDto> createUser(
+            @RequestBody RegisterUserRequest request,
+            UriComponentsBuilder uriBuilder                                                             //to access the id of the new user and get a 201 status in Postman.
+            ){
+        var user = userMapper.toEntity(request);
+        userRepository.save(user);
+
+        var userDto = userMapper.toDto(user);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();               //to map the path to the user id.
+
+        return ResponseEntity.created(uri).body(userDto);                                               //to return by the id of the user.
     }
 }
