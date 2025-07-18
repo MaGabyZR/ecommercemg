@@ -1,6 +1,7 @@
 package com.magabyzr.ecommercemg.controllers;
 
 import com.magabyzr.ecommercemg.dtos.RegisterUserRequest;
+import com.magabyzr.ecommercemg.dtos.UpdateUserRequest;
 import com.magabyzr.ecommercemg.dtos.UserDto;
 import com.magabyzr.ecommercemg.mappers.UserMapper;
 import com.magabyzr.ecommercemg.repositories.UserRepository;
@@ -59,5 +60,20 @@ public class UserController {
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();               //to map the path to the user id.
 
         return ResponseEntity.created(uri).body(userDto);                                               //to return by the id of the user.
+    }
+    //to update a resource
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name = "id") Long id,
+            @RequestBody UpdateUserRequest request){
+            var user = userRepository.findById(id).orElse(null);
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            userMapper.update(request,user);
+            userRepository.save(user);
+
+            return ResponseEntity.ok(userMapper.toDto(user));
     }
 }
