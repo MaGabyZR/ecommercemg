@@ -10,5 +10,5 @@ public class ProductDto {
     private String name;
     private BigDecimal price;
     private String description;
-    private Byte categoryId;
+    private Byte category_id;
 }

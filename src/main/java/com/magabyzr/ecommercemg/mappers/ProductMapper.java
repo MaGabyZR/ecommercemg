@@ -7,6 +7,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-    @Mapping(target = "categoryId", source = "category.id")
+    @Mapping(target = "category_id", source = "category.id")
     ProductDto toDto(Product product);
+
+    //method to return a product object.
+    Product toEntity(ProductDto productDto);
 }
