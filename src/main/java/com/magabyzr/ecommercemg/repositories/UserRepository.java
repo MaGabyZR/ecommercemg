@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 //Change it from Crud to Jpa to use Dto
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    boolean existsByEmail(String email);
 }

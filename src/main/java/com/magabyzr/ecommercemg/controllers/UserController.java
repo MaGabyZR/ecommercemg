@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -52,10 +53,16 @@ public class UserController {
 
     //to accept POST requests.
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
+    public ResponseEntity<?> registerUser(                                                              //use a ? to make the method more flexible and be able to use a map.
             @Valid @RequestBody RegisterUserRequest request,
             UriComponentsBuilder uriBuilder                                                             //to access the id of the new user and get a 201 status in Postman.
             ){
+        if (userRepository.existsByEmail(request.getEmail())){
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Email is already registered!")
+            );
+        }
+
         var user = userMapper.toEntity(request);
         userRepository.save(user);
 
