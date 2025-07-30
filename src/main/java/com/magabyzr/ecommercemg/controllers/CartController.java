@@ -3,17 +3,20 @@ package com.magabyzr.ecommercemg.controllers;
 import com.magabyzr.ecommercemg.dtos.AddItemToCartRequest;
 import com.magabyzr.ecommercemg.dtos.CartDto;
 import com.magabyzr.ecommercemg.dtos.CartItemDto;
+import com.magabyzr.ecommercemg.dtos.UpdateCartItemRequest;
 import com.magabyzr.ecommercemg.entities.Cart;
 import com.magabyzr.ecommercemg.entities.CartItem;
 import com.magabyzr.ecommercemg.mappers.CartMapper;
 import com.magabyzr.ecommercemg.repositories.CartRepository;
 import com.magabyzr.ecommercemg.repositories.ProductRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -77,7 +80,7 @@ public class CartController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(cartItemDto);
     }
-
+    //GET a cart
     @GetMapping("/{cartId}")
     public ResponseEntity<CartDto> getCart(@PathVariable UUID cartId) {
         var cart = cartRepository.getCartWithItems(cartId).orElse(null);
@@ -86,5 +89,36 @@ public class CartController {
         }
 
         return ResponseEntity.ok(cartMapper.toDto(cart));
+    }
+    //Update a cart item.
+    @PutMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<?> updateItem(                                        //? to be able to return a Map in the error status.
+            @PathVariable("cartId") UUID cartId,
+            @PathVariable("productId") Long productId,
+            @Valid @RequestBody UpdateCartItemRequest request
+    ) {
+        //find a cart in the repository.
+        var cart = cartRepository.getCartWithItems(cartId).orElse(null);
+        if (cart == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    Map.of("error", "Cart not found.")
+            );
+        }
+        //find a product in the cart.
+        var cartItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+        //if it does not exist return a not found error.
+        if (cartItem == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    Map.of("error", "Product not found in the cart.")
+            );
+        }
+            //if successful update the quantity and save the cart.
+            cartItem.setQuantity(request.getQuantity());
+            cartRepository.save(cart);
+
+            return ResponseEntity.ok(cartMapper.toDto(cartItem));
     }
 }
