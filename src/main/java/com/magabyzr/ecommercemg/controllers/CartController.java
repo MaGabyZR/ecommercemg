@@ -42,7 +42,6 @@ public class CartController {
         //Option1 without uri
         //return new ResponseEntity<>(cartDto, HttpStatus.CREATED);
     }
-
     //Add items to a cart
     @PostMapping(("/{cartId}/items"))
     public ResponseEntity<CartItemDto> addToCart(
@@ -103,5 +102,25 @@ public class CartController {
             cartRepository.save(cart);
 
             return ResponseEntity.ok(cartMapper.toDto(cartItem));
+    }
+    //Remove an item from a cart.
+    @DeleteMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<?> removeItem(                                        //? to be able to return a Map.
+            @PathVariable("cartId") UUID cartId,
+            @PathVariable("productId") Long productId
+    ){
+        //validate the cart
+        var cart = cartRepository.getCartWithItems(cartId).orElse(null);
+        if (cart == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    Map.of("error", "Cart was not found.")
+            );
+        }
+
+        cart.removeItem(productId);
+
+        cartRepository.save(cart);
+
+        return ResponseEntity.noContent().build();
     }
 }
