@@ -51,7 +51,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    //to accept POST requests.
+    //to accept POST requests to register a new User.
     @PostMapping
     public ResponseEntity<?> registerUser(                                                              //use a ? to make the method more flexible and be able to use a map.
             @Valid @RequestBody RegisterUserRequest request,
