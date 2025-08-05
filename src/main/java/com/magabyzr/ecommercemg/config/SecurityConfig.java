@@ -33,6 +33,7 @@ public class SecurityConfig {
                         //.anyRequest().permitAll()                                                              //a. all endpoints are public.
                         .requestMatchers("/carts/**").permitAll()                                              //b. make carts public.
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()                                //c. allow users to register without being authenticated first.
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //d. allow access to the login API.
                         .anyRequest().authenticated()                                                            //Any other request should be authenticated.
 
                 );
