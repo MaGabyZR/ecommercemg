@@ -1,7 +1,9 @@
 package com.magabyzr.ecommercemg.controllers;
 
+import com.magabyzr.ecommercemg.dtos.JwtResponse;
 import com.magabyzr.ecommercemg.dtos.LoginRequest;
 import com.magabyzr.ecommercemg.repositories.UserRepository;
+import com.magabyzr.ecommercemg.services.JwtService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,11 @@ public class AuthController {
     //private final UserRepository userRepository;
     //private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<JwtResponse> login(
             @Valid @RequestBody LoginRequest request){
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -39,8 +42,10 @@ public class AuthController {
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }*/
+        //generate the token.
+        var token = jwtService.generateToken(request.getEmail());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new JwtResponse(token));
     }
     //Exception handler.
     @ExceptionHandler(BadCredentialsException.class)
