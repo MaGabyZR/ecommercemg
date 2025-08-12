@@ -1,5 +1,6 @@
 package com.magabyzr.ecommercemg.services;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -27,15 +28,24 @@ public class JwtService {
     //Validate tokens.
     public boolean validateToken(String token){
         try{
-            var claims = Jwts.parser()
-                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            var claims = getClaims(token);
             return claims.getExpiration().after(new Date());
         }
         catch(JwtException ex){
             return false;
         }
+    }
+    //reusable method for extracting the claims / payload.
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    //Get the email from a token.
+    public String getEmailFromToken(String token){
+        return getClaims(token).getSubject();
     }
 }
