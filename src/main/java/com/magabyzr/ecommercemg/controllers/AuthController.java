@@ -46,8 +46,11 @@ public class AuthController {
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }*/
+        //Call the user repository to fetch the user object.
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
         //generate the token.
-        var token = jwtService.generateToken(request.getEmail());
+        var token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
@@ -65,10 +68,10 @@ public class AuthController {
     public ResponseEntity<UserDto> me(){
         //Extracting the current principal(user).
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var email = (String) authentication.getPrincipal();
+        var userId = (Long) authentication.getPrincipal();
 
         //Find the user in the repository.
-        var user = userRepository.findByEmail(email).orElse(null);
+        var user = userRepository.findById(userId).orElse(null);
         if(user == null){
             return ResponseEntity.notFound().build();
         }
