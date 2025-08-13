@@ -6,6 +6,8 @@ import com.magabyzr.ecommercemg.dtos.UserDto;
 import com.magabyzr.ecommercemg.mappers.UserMapper;
 import com.magabyzr.ecommercemg.repositories.UserRepository;
 import com.magabyzr.ecommercemg.services.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
-            @Valid @RequestBody LoginRequest request){
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse response) {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
@@ -48,11 +51,19 @@ public class AuthController {
         }*/
         //Call the user repository to fetch the user object.
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        //generate the accessToken and refreshToken.
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
-        //generate the token.
-        var token = jwtService.generateToken(user);
+        var cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);                                                                //it cannot be accessed by JavaScript.
+        cookie.setPath("/auth/refresh");                                                         //set the cookie path. "/" means all webpage.
+        cookie.setMaxAge(604800);                                                               //expires after 7 days.
+        cookie.setSecure(true);                                                                 //make it a secure cookie, it will only be sent over HTTPS connections.
+        response.addCookie(cookie);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(accessToken));                                 //the access token is returned in the body of the response.
+
     }
     //Validating JSON Web Tokens.
     @PostMapping("/validate")

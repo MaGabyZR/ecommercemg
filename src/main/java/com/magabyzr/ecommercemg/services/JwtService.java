@@ -15,19 +15,31 @@ public class JwtService {
     @Value("${spring.jwt.secret}")
     private String secret;
 
-    //Generate tokens.
-    public String generateToken(User user) {
-        final long tokenExpiration = 86400;                                                         //number of seconds in a day, to make token valid for one day.
+    //Generate access tokens.
+    public String generateAccessToken(User user) {
+        final long tokenExpiration = 300;                                                              //five minutes.
 
-        return Jwts.builder()
-            .subject(user.getId().toString())
-            .claim("email", user.getEmail())
-            .claim("name", user.getName())
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))              //*1000 because you are dealing with milliseconds.
-            .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
-            .compact();                                                                             //to generate the token.
+        return generateAccessToken(user, tokenExpiration);
     }
+
+    //Generate refresh tokens.
+    public String generateRefreshToken(User user) {
+        final long tokenExpiration = 604800;                                                          //7 days.
+
+        return generateAccessToken(user, tokenExpiration);
+    }
+
+    private String generateAccessToken(User user, long tokenExpiration) {
+        return Jwts.builder()
+                .subject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("name", user.getName())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))              //*1000 because you are dealing with milliseconds.
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .compact();
+    }
+
     //Validate tokens.
     public boolean validateToken(String token){
         try{
