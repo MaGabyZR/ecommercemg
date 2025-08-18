@@ -1,5 +1,6 @@
 package com.magabyzr.ecommercemg.controllers;
 
+import com.magabyzr.ecommercemg.config.JwtConfig;
 import com.magabyzr.ecommercemg.dtos.JwtResponse;
 import com.magabyzr.ecommercemg.dtos.LoginRequest;
 import com.magabyzr.ecommercemg.dtos.UserDto;
@@ -26,6 +27,7 @@ public class AuthController {
     //private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final JwtConfig jwtConfig;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -58,7 +60,7 @@ public class AuthController {
         var cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);                                                                //it cannot be accessed by JavaScript.
         cookie.setPath("/auth/refresh");                                                         //set the cookie path. "/" means all webpage.
-        cookie.setMaxAge(604800);                                                               //expires after 7 days.
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());                                                               //expires after 7 days.
         cookie.setSecure(true);                                                                 //make it a secure cookie, it will only be sent over HTTPS connections.
         response.addCookie(cookie);
 
