@@ -4,6 +4,7 @@ import com.magabyzr.ecommercemg.dtos.ChangePasswordRequest;
 import com.magabyzr.ecommercemg.dtos.RegisterUserRequest;
 import com.magabyzr.ecommercemg.dtos.UpdateUserRequest;
 import com.magabyzr.ecommercemg.dtos.UserDto;
+import com.magabyzr.ecommercemg.entities.Role;
 import com.magabyzr.ecommercemg.mappers.UserMapper;
 import com.magabyzr.ecommercemg.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -68,6 +69,7 @@ public class UserController {
 
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
