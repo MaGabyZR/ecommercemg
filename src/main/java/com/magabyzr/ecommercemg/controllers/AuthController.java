@@ -68,14 +68,34 @@ public class AuthController {
 
     }
     //Validating JSON Web Tokens.
-    @PostMapping("/validate")
-    public boolean validate(@RequestHeader("Authorization") String authHeader){
-        System.out.println(("Validate called."));
+//    @PostMapping("/validate")
+//    public boolean validate(@RequestHeader("Authorization") String authHeader){
+//        System.out.println(("Validate called."));
+//
+//        var token = authHeader.replace("Bearer ", "");
+//
+//        return jwtService.validateToken(token);
+//    }
 
-        var token = authHeader.replace("Bearer ", "");
+    //Endpoint for refreshing and access toke.
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refresh(
+            //receive the refresh token.
+            @CookieValue(value = "refreshToken") String refreshToken
+    ){
+        //validate the refresh token.
+        if(!jwtService.validateToken(refreshToken)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        return jwtService.validateToken(token);
+        var userId = jwtService.getUserIdFromToken(refreshToken);
+        var user = userRepository.findById(userId).orElseThrow();
+        var accessToken = jwtService.generateAccessToken(user);
+
+        return ResponseEntity.ok(new JwtResponse(accessToken));
+
     }
+
     //Endpoint for getting the current user.
     @GetMapping("/me")
     public ResponseEntity<UserDto> me(){
