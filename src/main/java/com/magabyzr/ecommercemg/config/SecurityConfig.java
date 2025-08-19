@@ -1,5 +1,6 @@
 package com.magabyzr.ecommercemg.config;
 
+import com.magabyzr.ecommercemg.entities.Role;
 import com.magabyzr.ecommercemg.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -64,14 +64,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(c -> c
                         //.anyRequest().permitAll()                                                              //a. all endpoints are public.
                         .requestMatchers("/carts/**").permitAll()                                              //b. make carts public.
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())                                         //to restrict access to admin only.
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()                                //c. allow users to register without being authenticated first.
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //d. allow access to the login API.
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //e. allow request to refresh tokens.
                         .anyRequest().authenticated()                                                            //Any other request should be authenticated.
                 )
                         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)   //order of how the filters should be called.
-                        .exceptionHandling(c ->
-                                c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+                        .exceptionHandling(c ->{
+                            c.authenticationEntryPoint(
+                                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                            c.accessDeniedHandler(((request, response, accessDeniedException) ->
+                                    response.setStatus(HttpStatus.FORBIDDEN.value())));
+                        });
 
         return http.build();
 
