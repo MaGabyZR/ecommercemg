@@ -1,6 +1,7 @@
 package com.magabyzr.ecommercemg.services;
 
 import com.magabyzr.ecommercemg.config.JwtConfig;
+import com.magabyzr.ecommercemg.entities.Role;
 import com.magabyzr.ecommercemg.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -64,5 +65,9 @@ public class JwtService {
     //Get the id from a token.
     public Long getUserIdFromToken(String token){
         return Long.valueOf(getClaims(token).getSubject());
+    }
+    //Get the role from the token
+    public Role getRoleFromToken(String token){
+        return Role.valueOf(getClaims(token).get("role", String.class));
     }
 }
