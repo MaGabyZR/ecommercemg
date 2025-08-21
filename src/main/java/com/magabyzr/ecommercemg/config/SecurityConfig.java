@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(c -> c
                         //.anyRequest().permitAll()                                                              //a. all endpoints are public.
                         .requestMatchers("/carts/**").permitAll()                                              //b. make carts public.
-                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())                                         //to restrict access to admin only.
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())                               //to restrict access to admin only.
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()                                //c. allow users to register without being authenticated first.
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //d. allow access to the login API.
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //e. allow request to refresh tokens.
