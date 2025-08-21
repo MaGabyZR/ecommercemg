@@ -15,42 +15,51 @@ import java.util.Date;
 @AllArgsConstructor
 @Service
 public class JwtService {
-/*    @Value("${spring.jwt.secret}")            //replaces with a Jwt Config object
+/*    @Value("${spring.jwt.secret}")            //replaced with a Jwt Config object
     private String secret;*/
 
     //Inject our secret with a Jwt Config Object.
     private final JwtConfig jwtConfig;
 
     //Generate access tokens.
-    public String generateAccessToken(User user) {
+    public Jwt generateAccessToken(User user) {
         return generateToken(user, jwtConfig.getAccessTokenExpiration());
     }
 
     //Generate refresh tokens.
-    public String generateRefreshToken(User user) {
+    public Jwt generateRefreshToken(User user) {
         return generateToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
-    private String generateToken(User user, long tokenExpiration) {
-        return Jwts.builder()
+    private Jwt generateToken(User user, long tokenExpiration) {
+        var claims = Jwts.claims()
                 .subject(user.getId().toString())
-                .claim("email", user.getEmail())
-                .claim("name", user.getName())
-                .claim("role", user.getRole())
+                .add("email", user.getEmail())
+                .add("name", user.getName())
+                .add("role", user.getRole())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))              //*1000 because you are dealing with milliseconds.
-                .signWith(jwtConfig.getSecretKey())
-                .compact();
+                .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))                  //*1000 because you are dealing with milliseconds.
+                .build();
+        return new Jwt(claims, jwtConfig.getSecretKey());
     }
 
-    //Validate tokens.
-    public boolean validateToken(String token){
-        try{
+    //Validate tokens. Replaced with Jwt.java
+//    public boolean validateToken(String token){
+//        try{
+//            var claims = getClaims(token);
+//            return claims.getExpiration().after(new Date());
+//        }
+//        catch(JwtException ex){
+//            return false;
+//        }
+//    }
+    //Parse the token
+    public Jwt parseToken(String token){
+        try {
             var claims = getClaims(token);
-            return claims.getExpiration().after(new Date());
-        }
-        catch(JwtException ex){
-            return false;
+            return new Jwt(claims, jwtConfig.getSecretKey());
+        } catch (JwtException e) {
+            return null;
         }
     }
     //reusable method for extracting the claims / payload.
@@ -62,12 +71,12 @@ public class JwtService {
                 .getPayload();
     }
 
-    //Get the id from a token.
-    public Long getUserIdFromToken(String token){
-        return Long.valueOf(getClaims(token).getSubject());
-    }
-    //Get the role from the token
-    public Role getRoleFromToken(String token){
-        return Role.valueOf(getClaims(token).get("role", String.class));
-    }
+    //Get the id from a token. Replaced with Jwt.java
+//    public Long getUserIdFromToken(String token){
+//        return Long.valueOf(getClaims(token).getSubject());
+//    }
+    //Get the role from the token. Replaced with Jwt.java
+//    public Role getRoleFromToken(String token){
+//        return Role.valueOf(getClaims(token).get("role", String.class));
+//    }
 }
