@@ -1,9 +1,6 @@
 package com.magabyzr.ecommercemg.controllers;
 
-import com.magabyzr.ecommercemg.dtos.ChangePasswordRequest;
-import com.magabyzr.ecommercemg.dtos.RegisterUserRequest;
-import com.magabyzr.ecommercemg.dtos.UpdateUserRequest;
-import com.magabyzr.ecommercemg.dtos.UserDto;
+import com.magabyzr.ecommercemg.dtos.*;
 import com.magabyzr.ecommercemg.entities.Role;
 import com.magabyzr.ecommercemg.mappers.UserMapper;
 import com.magabyzr.ecommercemg.repositories.UserRepository;
@@ -63,7 +60,7 @@ public class UserController {
             ){
         if (userRepository.existsByEmail(request.getEmail())){
             return ResponseEntity.badRequest().body(
-                    Map.of("message", "Email is already registered!")
+                    new ErrorDto("Email is already registered!")
             );
         }
 

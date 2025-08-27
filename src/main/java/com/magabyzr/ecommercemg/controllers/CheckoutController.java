@@ -2,6 +2,7 @@ package com.magabyzr.ecommercemg.controllers;
 
 import com.magabyzr.ecommercemg.dtos.CheckoutRequest;
 import com.magabyzr.ecommercemg.dtos.CheckoutResponse;
+import com.magabyzr.ecommercemg.dtos.ErrorDto;
 import com.magabyzr.ecommercemg.entities.Order;
 import com.magabyzr.ecommercemg.entities.OrderItem;
 import com.magabyzr.ecommercemg.entities.OrderStatus;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -37,13 +37,13 @@ public class CheckoutController {
         //a. if it does not exist, return 400 bad request.
         if(cart == null){
             return ResponseEntity.badRequest().body(
-                    Map.of("error", "Cart not found.")
+                    new ErrorDto("Cart not found.")
             );
         }
         //b.if cart is empty
         if (cart.getItems().isEmpty()){
             return ResponseEntity.badRequest().body(
-                    Map.of("error", "Cart is empty.")
+                    new ErrorDto("Cart is empty.")
             );
         }
         //c.create an order, save it, clear the cart and return 200 ok
