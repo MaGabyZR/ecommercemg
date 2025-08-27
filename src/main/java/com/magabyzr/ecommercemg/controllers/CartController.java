@@ -1,9 +1,6 @@
 package com.magabyzr.ecommercemg.controllers;
 
-import com.magabyzr.ecommercemg.dtos.AddItemToCartRequest;
-import com.magabyzr.ecommercemg.dtos.CartDto;
-import com.magabyzr.ecommercemg.dtos.CartItemDto;
-import com.magabyzr.ecommercemg.dtos.UpdateCartItemRequest;
+import com.magabyzr.ecommercemg.dtos.*;
 import com.magabyzr.ecommercemg.exceptions.CartNotFoundException;
 import com.magabyzr.ecommercemg.exceptions.ProductNotFoundException;
 import com.magabyzr.ecommercemg.services.CartService;
@@ -17,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -91,15 +87,15 @@ public class CartController {
     }
     //handle exceptions.
     @ExceptionHandler(CartNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCartNotFound(){
+    public ResponseEntity<?> handleCartNotFound(){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                Map.of("error", "Cart not found.")
+                new ErrorDto("Cart not found.")
         );
     }
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductNotFound(){
+    public ResponseEntity<?> handleProductNotFound(){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                Map.of("error", "Product was not found in the cart.")
+                new ErrorDto("Product was not found in the cart.")
         );
     }
 }
