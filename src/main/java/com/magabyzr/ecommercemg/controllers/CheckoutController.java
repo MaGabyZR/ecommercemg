@@ -4,8 +4,6 @@ import com.magabyzr.ecommercemg.dtos.CheckoutRequest;
 import com.magabyzr.ecommercemg.dtos.CheckoutResponse;
 import com.magabyzr.ecommercemg.dtos.ErrorDto;
 import com.magabyzr.ecommercemg.entities.Order;
-import com.magabyzr.ecommercemg.entities.OrderItem;
-import com.magabyzr.ecommercemg.entities.OrderStatus;
 import com.magabyzr.ecommercemg.repositories.CartRepository;
 import com.magabyzr.ecommercemg.repositories.OrderRepository;
 import com.magabyzr.ecommercemg.services.AuthService;
@@ -46,24 +44,8 @@ public class CheckoutController {
                     new ErrorDto("Cart is empty.")
             );
         }
-        //c.create an order, save it, clear the cart and return 200 ok
-        var order = new Order();
-        order.setTotalPrice(cart.getTotalPrice());
-        order.setStatus(OrderStatus.PENDING);
-        order.setCustomer(authService.getCurrentUser());
+        var order = Order.fromCart(cart, authService.getCurrentUser());
 
-        //convert each cart item to and order item.
-        cart.getItems().forEach(item -> {
-            //1. create an order item
-            var orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(item.getProduct());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setTotalPrice(item.getTotalPrice());
-            orderItem.setUnitPrice(item.getProduct().getPrice());
-            //2. add it to our order.
-            order.getItems().add(orderItem);
-        });
         //Save it to our repository.
         orderRepository.save(order);
         //Clear the cart.
