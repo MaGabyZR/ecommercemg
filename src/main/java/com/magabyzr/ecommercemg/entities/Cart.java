@@ -75,4 +75,8 @@ public class Cart {
     public void clear(){
         items.clear();
     }
+    //Check if the cart is empty.
+    public boolean isEmpty(){
+        return items.isEmpty();
+    }
 }
