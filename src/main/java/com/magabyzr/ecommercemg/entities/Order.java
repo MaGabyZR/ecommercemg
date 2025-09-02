@@ -45,7 +45,6 @@ public class Order {
         order.setStatus(OrderStatus.PENDING);
         order.setTotalPrice(cart.getTotalPrice());
 
-
         //convert each cart item to and order item.
         cart.getItems().forEach(item -> {
             //1. create an order item
@@ -55,6 +54,10 @@ public class Order {
         });
 
         return order;
+    }
+    //Verify which user placed an order.
+    public boolean isPlacedBy(User customer){
+        return this.customer.equals(customer);
     }
 
 }
