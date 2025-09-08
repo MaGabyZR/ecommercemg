@@ -67,7 +67,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())                               //to restrict access to admin only.
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()                                //c. allow users to register without being authenticated first.
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //d. allow access to the login API.
-                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //e. allow request to refresh tokens.
+                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //e. allow request to our webhook.
+                        .requestMatchers(HttpMethod.POST, "/checkout/webhook").permitAll()
                         .anyRequest().authenticated()                                                            //Any other request should be authenticated.
                 )
                         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)   //order of how the filters should be called.
