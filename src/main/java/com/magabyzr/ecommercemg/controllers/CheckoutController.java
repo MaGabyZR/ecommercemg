@@ -1,11 +1,12 @@
 package com.magabyzr.ecommercemg.controllers;
 
 import com.magabyzr.ecommercemg.dtos.CheckoutRequest;
+import com.magabyzr.ecommercemg.dtos.CheckoutResponse;
 import com.magabyzr.ecommercemg.dtos.ErrorDto;
 import com.magabyzr.ecommercemg.exceptions.CartEmptyException;
 import com.magabyzr.ecommercemg.exceptions.CartNotFoundException;
+import com.magabyzr.ecommercemg.exceptions.PaymentException;
 import com.magabyzr.ecommercemg.services.CheckoutService;
-import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,15 @@ public class CheckoutController {
     private final CheckoutService checkoutService;
 
     @PostMapping
-    public ResponseEntity<?> checkout(@Valid @RequestBody CheckoutRequest request){
-        try{
-            return ResponseEntity.ok( checkoutService.checkout(request));                           //If everything is ok.
-        }
-        catch (StripeException ex){                                                                 //If something goes wrong.
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorDto("Error creating a checkout session"));
-        }
+    public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request){
+        return checkoutService.checkout(request);
+    }
+    //Handle payment exceptions, in case we cannot create a Checkout Session.
+    @ExceptionHandler({PaymentException.class})
+    public ResponseEntity<?> handlePaymentException(){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorDto("Error creating a checkout session"));
     }
     //Handle the exceptions and return the right response to the client.
     @ExceptionHandler({CartEmptyException.class, CartNotFoundException.class})
