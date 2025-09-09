@@ -26,7 +26,7 @@ public class Order {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private PaymentStatus status;
 
     @Column(name = "created_at", insertable = false, updatable = false)                         //To tell Hibernate we assigned a default value in our db and there is no need to assign a value.
     private LocalDateTime createdAt;
@@ -42,7 +42,7 @@ public class Order {
         //c.create an order, save it, clear the cart and return 200 ok
         var order = new Order();
         order.setCustomer(customer);
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(PaymentStatus.PENDING);
         order.setTotalPrice(cart.getTotalPrice());
 
         //convert each cart item to and order item.
