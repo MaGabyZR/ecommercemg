@@ -1,6 +1,6 @@
 package com.magabyzr.ecommercemg.entities;
 
-public enum OrderStatus {
+public enum PaymentStatus {
     PENDING,
     PAID,
     FAILED,
