@@ -3,11 +3,15 @@ package com.magabyzr.ecommercemg.controllers;
 import com.magabyzr.ecommercemg.dtos.CheckoutRequest;
 import com.magabyzr.ecommercemg.dtos.CheckoutResponse;
 import com.magabyzr.ecommercemg.dtos.ErrorDto;
+import com.magabyzr.ecommercemg.entities.OrderStatus;
 import com.magabyzr.ecommercemg.exceptions.CartEmptyException;
 import com.magabyzr.ecommercemg.exceptions.CartNotFoundException;
+import com.magabyzr.ecommercemg.exceptions.OrderNotFoundException;
 import com.magabyzr.ecommercemg.exceptions.PaymentException;
+import com.magabyzr.ecommercemg.repositories.OrderRepository;
 import com.magabyzr.ecommercemg.services.CheckoutService;
 import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/checkout")
 public class CheckoutController {
     private final CheckoutService checkoutService;
+    private final OrderRepository orderRepository;
 
     @Value("${stripe.webhookSecretKey}")
     private String webhookSecretKey;
@@ -44,9 +49,17 @@ public class CheckoutController {
 
             var stripeObject = event.getDataObjectDeserializer().getObject().orElse(null);
 
+            //Handle the status of an order.
             switch (event.getType()) {
+                //UPDATE order status to (PAID)
                 case "payment_intent.succeeded" -> {
-                    //UPDATE order status to (PAID)
+                    var paymentIntent = (PaymentIntent) stripeObject;
+                    if (paymentIntent != null) {
+                        var orderId = paymentIntent.getMetadata().get("order_id");
+                        var order = orderRepository.findById(Long.valueOf(orderId)).orElseThrow();
+                        order.setStatus(OrderStatus.PAID);
+                        orderRepository.save(order);
+                    }
                 }
                 case "payment_intent.failed" -> {
                     //UPDATE order status (FAILED)
