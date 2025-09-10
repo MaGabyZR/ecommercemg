@@ -1,7 +1,7 @@
 package com.magabyzr.ecommercemg.repositories;
 
 import com.magabyzr.ecommercemg.entities.Order;
-import com.magabyzr.ecommercemg.entities.User;
+import com.magabyzr.ecommercemg.users.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
