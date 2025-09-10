@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.exceptions;
+package com.magabyzr.ecommercemg.orders;
 
 public class OrderNotFoundException extends RuntimeException {
     public OrderNotFoundException() {

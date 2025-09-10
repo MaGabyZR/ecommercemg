@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.dtos;
+package com.magabyzr.ecommercemg.orders;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class OrderItemDto {
-    private OrderProductDto product;
+    private ProductDto product;
     private int quantity;
     private BigDecimal totalPrice;
 }

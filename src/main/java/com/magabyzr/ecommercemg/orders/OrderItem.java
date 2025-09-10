@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.entities;
+package com.magabyzr.ecommercemg.orders;
 
 import com.magabyzr.ecommercemg.products.Product;
 import jakarta.persistence.*;

@@ -1,10 +1,10 @@
 package com.magabyzr.ecommercemg.payments;
 
-import com.magabyzr.ecommercemg.entities.Order;
+import com.magabyzr.ecommercemg.orders.Order;
 import com.magabyzr.ecommercemg.carts.CartEmptyException;
 import com.magabyzr.ecommercemg.carts.CartNotFoundException;
 import com.magabyzr.ecommercemg.carts.CartRepository;
-import com.magabyzr.ecommercemg.repositories.OrderRepository;
+import com.magabyzr.ecommercemg.orders.OrderRepository;
 import com.magabyzr.ecommercemg.auth.AuthService;
 import com.magabyzr.ecommercemg.carts.CartService;
 import lombok.RequiredArgsConstructor;

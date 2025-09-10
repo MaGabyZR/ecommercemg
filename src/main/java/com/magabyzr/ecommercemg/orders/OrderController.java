@@ -1,9 +1,6 @@
-package com.magabyzr.ecommercemg.controllers;
+package com.magabyzr.ecommercemg.orders;
 
 import com.magabyzr.ecommercemg.dtos.ErrorDto;
-import com.magabyzr.ecommercemg.dtos.OrderDto;
-import com.magabyzr.ecommercemg.exceptions.OrderNotFoundException;
-import com.magabyzr.ecommercemg.services.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

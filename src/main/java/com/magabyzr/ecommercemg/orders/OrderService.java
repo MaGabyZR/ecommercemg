@@ -1,10 +1,6 @@
-package com.magabyzr.ecommercemg.services;
+package com.magabyzr.ecommercemg.orders;
 
 import com.magabyzr.ecommercemg.auth.AuthService;
-import com.magabyzr.ecommercemg.dtos.OrderDto;
-import com.magabyzr.ecommercemg.exceptions.OrderNotFoundException;
-import com.magabyzr.ecommercemg.mappers.OrderMapper;
-import com.magabyzr.ecommercemg.repositories.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;

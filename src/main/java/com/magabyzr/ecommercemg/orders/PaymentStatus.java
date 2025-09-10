@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.entities;
+package com.magabyzr.ecommercemg.orders;
 
 public enum PaymentStatus {
     PENDING,

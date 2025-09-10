@@ -1,6 +1,6 @@
 package com.magabyzr.ecommercemg.payments;
 
-import com.magabyzr.ecommercemg.entities.Order;
+import com.magabyzr.ecommercemg.orders.Order;
 
 import java.util.Optional;
 
