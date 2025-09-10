@@ -1,118 +1,80 @@
 package com.magabyzr.ecommercemg.users;
 
-import com.magabyzr.ecommercemg.dtos.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Set;
+import java.util.Map;
 
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @GetMapping                                                                                         //to expose it, it is the same as RequestMapping
     public Iterable<UserDto> getAllUsers(                                                                  //Iterable is the parent of List<>
-            //@RequestHeader(required = false, name = "x-auth-token") String authToken,
-            @RequestParam(required = false, defaultValue = "", name = "sort") String sort                //Set it to false, to make it optional.
+            @RequestParam(required = false, defaultValue = "", name = "sort") String sortBy                //Set it to false, to make it optional.
     ) {
-        //System.out.println(authToken);
-
-        if (!Set.of("name", "email").contains(sort))
-            sort = "name";
-
-        return userRepository.findAll(Sort.by(sort))
-                .stream()                                              //From here start using Dto
-                .map(userMapper::toDto)                                //Replacing the old lambda function with a call to the method.
-                .toList();
+        return userService.getAllUsers(sortBy);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {            //to pass id dynamically to this route.
-        var user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(userMapper.toDto(user));
+    public UserDto getUser(@PathVariable Long id) {                                                         //to pass id dynamically to this route.
+        return userService.getUser(id);
     }
-
     //to accept POST requests to register a new User.
     @PostMapping
-    public ResponseEntity<?> registerUser(                                                              //use a ? to make the method more flexible and be able to use a map.
+    public ResponseEntity<?> registerUser(                                                                  //use a ? to make the method more flexible and be able to use a map.
             @Valid @RequestBody RegisterUserRequest request,
-            UriComponentsBuilder uriBuilder                                                             //to access the id of the new user and get a 201 status in Postman.
+            UriComponentsBuilder uriBuilder                                                                 //to access the id of the new user and get a 201 status in Postman.
             ){
-        if (userRepository.existsByEmail(request.getEmail())){
-            return ResponseEntity.badRequest().body(
-                    new ErrorDto("Email is already registered!")
-            );
-        }
 
-        var user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.USER);
-        userRepository.save(user);
+        var userDto = userService.registerUser(request);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();                   //to map the path to the user id.
 
-        var userDto = userMapper.toDto(user);
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();               //to map the path to the user id.
-
-        return ResponseEntity.created(uri).body(userDto);                                               //to return by the id of the user.
+        return ResponseEntity.created(uri).body(userDto);                                                   //to return by the id of the user.
     }
     //to update a resource
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(
+    public UserDto updateUser(
             @PathVariable(name = "id") Long id,
             @RequestBody UpdateUserRequest request){
-            var user = userRepository.findById(id).orElse(null);
-            if (user == null) {
-                return ResponseEntity.notFound().build();
-            }
 
-            userMapper.update(request,user);
-            userRepository.save(user);
-
-            return ResponseEntity.ok(userMapper.toDto(user));
+        return userService.updateUser(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
-        var user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        userRepository.delete(user);
-        return ResponseEntity.noContent().build();
+    public void deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
     }
 
     @PostMapping("/{id}/change-password")
-    public ResponseEntity<Void> changePassword(
+    public void changePassword(
             @PathVariable Long id,
             @RequestBody ChangePasswordRequest request){
+        userService.changePassword(id, request);
+    }
 
-        var user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateUser() {
+        return ResponseEntity.badRequest().body(
+                Map.of("email", "Email is already registered.")
+        );
+    }
 
-        if (!user.getPassword().equals(request.getOldPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Void> handleUserNotFound() {
+        return ResponseEntity.notFound().build();
+    }
 
-        user.setPassword(request.getNewPassword());
-        userRepository.save(user);
-
-        return ResponseEntity.noContent().build();
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Void> handleAccessDenied() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
