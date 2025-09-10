@@ -1,5 +1,6 @@
 package com.magabyzr.ecommercemg.entities;
 
+import com.magabyzr.ecommercemg.products.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

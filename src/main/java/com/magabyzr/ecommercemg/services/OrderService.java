@@ -1,5 +1,6 @@
 package com.magabyzr.ecommercemg.services;
 
+import com.magabyzr.ecommercemg.auth.AuthService;
 import com.magabyzr.ecommercemg.dtos.OrderDto;
 import com.magabyzr.ecommercemg.exceptions.OrderNotFoundException;
 import com.magabyzr.ecommercemg.mappers.OrderMapper;

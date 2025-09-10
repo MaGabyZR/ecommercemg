@@ -1,5 +1,7 @@
 package com.magabyzr.ecommercemg.entities;
 
+import com.magabyzr.ecommercemg.carts.Cart;
+import com.magabyzr.ecommercemg.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
