@@ -1,11 +1,11 @@
-package com.magabyzr.ecommercemg.dtos;
+package com.magabyzr.ecommercemg.orders;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
-public class OrderProductDto {
+public class ProductDto {
     private Long id;
     private String name;
     private BigDecimal price;

@@ -1,8 +1,8 @@
 package com.magabyzr.ecommercemg.payments;
 
-import com.magabyzr.ecommercemg.entities.Order;
-import com.magabyzr.ecommercemg.entities.OrderItem;
-import com.magabyzr.ecommercemg.entities.PaymentStatus;
+import com.magabyzr.ecommercemg.orders.Order;
+import com.magabyzr.ecommercemg.orders.OrderItem;
+import com.magabyzr.ecommercemg.orders.PaymentStatus;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
