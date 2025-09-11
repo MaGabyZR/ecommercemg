@@ -1,6 +1,5 @@
-package com.magabyzr.ecommercemg.controllers;
+package com.magabyzr.ecommercemg.common;
 
-import com.magabyzr.ecommercemg.dtos.ErrorDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

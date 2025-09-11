@@ -1,6 +1,6 @@
 package com.magabyzr.ecommercemg.orders;
 
-import com.magabyzr.ecommercemg.dtos.ErrorDto;
+import com.magabyzr.ecommercemg.common.ErrorDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
