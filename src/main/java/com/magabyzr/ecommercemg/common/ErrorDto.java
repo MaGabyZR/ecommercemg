@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.dtos;
+package com.magabyzr.ecommercemg.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

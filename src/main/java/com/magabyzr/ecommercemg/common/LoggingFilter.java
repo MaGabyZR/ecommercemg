@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.filters;
+package com.magabyzr.ecommercemg.common;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

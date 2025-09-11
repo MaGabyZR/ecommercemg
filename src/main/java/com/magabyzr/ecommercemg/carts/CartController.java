@@ -1,6 +1,6 @@
 package com.magabyzr.ecommercemg.carts;
 
-import com.magabyzr.ecommercemg.dtos.*;
+import com.magabyzr.ecommercemg.common.ErrorDto;
 import com.magabyzr.ecommercemg.products.ProductNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

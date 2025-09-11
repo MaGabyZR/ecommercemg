@@ -1,4 +1,4 @@
-package com.magabyzr.ecommercemg.controllers;
+package com.magabyzr.ecommercemg.common;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

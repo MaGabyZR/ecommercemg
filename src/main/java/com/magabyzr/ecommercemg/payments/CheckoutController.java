@@ -1,6 +1,6 @@
 package com.magabyzr.ecommercemg.payments;
 
-import com.magabyzr.ecommercemg.dtos.ErrorDto;
+import com.magabyzr.ecommercemg.common.ErrorDto;
 import com.magabyzr.ecommercemg.carts.CartEmptyException;
 import com.magabyzr.ecommercemg.carts.CartNotFoundException;
 import jakarta.validation.Valid;
