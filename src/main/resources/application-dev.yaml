@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommercemg?createDatabaseIfNotExist=true
+    username: root
+    password: magaby2280@
+  jpa:
+    show-sql: true
+websiteUrl: http://localhost4242        #frontend app port
