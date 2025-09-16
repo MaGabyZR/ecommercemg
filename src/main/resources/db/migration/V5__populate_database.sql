@@ -1,22 +1,23 @@
--- Inserting categories into the 'categories' table
-INSERT INTO `categories` (`id`, `name`)
-VALUES (1, 'Dairy & Eggs'),
-       (2, 'Fruits & Vegetables'),
-       (3, 'Bakery'),
-       (4, 'Meat & Seafood'),
-       (5, 'Pantry Staples'),
-       (6, 'Beverages'),
-       (7, 'Snacks');
--- Inserting 10 products into the 'products' table
-INSERT INTO `products` (`name`, `price`, `description`, `category_id`)
-VALUES ('Organic Whole Milk', 3.99, 'One gallon of fresh, USDA certified organic whole milk.', 1),
-       ('Grade A Large Eggs', 2.79, 'A dozen large, grade A white eggs. Perfect for breakfast.', 1),
-       ('Gala Apples', 4.50, 'A 3 lb bag of crisp and sweet Gala apples, great for snacking.', 2),
-       ('Organic Bananas', 1.29, 'A bunch of fresh, organic bananas, sold by the pound.', 2),
-       ('Whole Wheat Bread', 3.49, 'A 24 oz loaf of soft, 100% whole wheat bread.', 3),
-       ('Boneless Chicken Breast', 9.99, 'Lean and tender boneless, skinless chicken breasts, family pack.', 4),
-       ('Spaghetti Pasta', 1.99, 'A 16 oz box of classic spaghetti, perfect for your favorite Italian dishes.', 5),
-       ('Extra Virgin Olive Oil', 8.75, 'A 500ml bottle of cold-pressed extra virgin olive oil.', 5),
-       ('Dark Roast Coffee Beans', 12.50, 'A 12 oz bag of whole bean, fair-trade dark roast coffee.', 6),
-       ('Kettle-Cooked Potato Chips', 4.25, 'A large bag of sea salt kettle-cooked potato chips for a crunchy snack.',
-        7);
+INSERT INTO categories (name)
+VALUES ('Produce'),        -- 1
+       ('Dairy'),          -- 2
+       ('Bakery'),         -- 3
+       ('Meat & Seafood'), -- 4
+       ('Beverages'),      -- 5
+       ('Pantry'),         -- 6
+       ('Frozen'),         -- 7
+       ('Snacks'),         -- 8
+       ('Household'),      -- 9
+       ('Personal Care'); -- 10
+INSERT INTO products (name, price, description, category_id)
+VALUES ('Bananas (1 lb)', 0.59, 'Fresh yellow bananas, great for snacking or smoothies.', 1),
+       ('Whole Milk (1 gallon)', 3.49, 'Grade A whole milk, vitamin D fortified.', 2),
+       ('Sourdough Bread Loaf', 4.29, 'Artisan sourdough bread baked fresh daily.', 3),
+       ('Boneless Chicken Breast (1 lb)', 5.99, 'Skinless, boneless chicken breast. Perfect for grilling or baking.',
+        4),
+       ('Coca-Cola (12-pack cans)', 7.99, '12-pack of 12 oz Coca-Cola classic cans.', 5),
+       ('Peanut Butter (16 oz)', 2.99, 'Creamy peanut butter made from roasted peanuts.', 6),
+       ('Frozen Pepperoni Pizza', 6.49, 'Thin crust pepperoni pizza ready to bake from frozen.', 7),
+       ('Lays Classic Potato Chips (8 oz)', 3.79, 'Crispy and salty potato chips. A classic snack.', 8),
+       ('Paper Towels (6 rolls)', 8.99, 'Super absorbent paper towels for household cleaning.', 9),
+       ('Toothpaste (6 oz)', 2.49, 'Fluoride toothpaste for daily oral hygiene.', 10);
