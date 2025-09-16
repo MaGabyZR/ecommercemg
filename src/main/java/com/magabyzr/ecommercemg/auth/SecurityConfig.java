@@ -62,11 +62,18 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(c -> c
                         //.anyRequest().permitAll()                                                              //a. all endpoints are public.
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/carts/**").permitAll()                                              //b. make carts public.
                         .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())                               //to restrict access to admin only.
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()                                //c. allow users to register without being authenticated first.
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //d. allow access to the login API.
-                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //e. allow request to our webhook.
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()                           //d. allow access to the all products endpoint including the children.
+                        .requestMatchers(HttpMethod.POST, "/products/**").hasRole(Role.ADMIN.name())           //e. only admins can post, put or delete.
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //f. allow access to the login API.
+                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //g. allow request to our webhook.
                         .requestMatchers(HttpMethod.POST, "/checkout/webhook").permitAll()
                         .anyRequest().authenticated()                                                            //Any other request should be authenticated.
                 )
