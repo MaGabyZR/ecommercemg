@@ -1,10 +1,9 @@
 package com.magabyzr.ecommercemg.auth;
 
-import com.magabyzr.ecommercemg.users.Role;
+import com.magabyzr.ecommercemg.common.SecurityRules;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,12 +20,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final List<SecurityRules> featureSecurityRules;
 
     //Hashing passwords.
     @Bean
@@ -48,7 +50,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-
     }
 
     @Bean
@@ -60,32 +61,19 @@ public class SecurityConfig {
                 .sessionManagement(c ->
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(c -> c
-                        //.anyRequest().permitAll()                                                              //a. all endpoints are public.
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/carts/**").permitAll()                                              //b. make carts public.
-                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())                               //to restrict access to admin only.
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()                                //c. allow users to register without being authenticated first.
-                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()                           //d. allow access to the all products endpoint including the children.
-                        .requestMatchers(HttpMethod.POST, "/products/**").hasRole(Role.ADMIN.name())           //e. only admins can post, put or delete.
-                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()                           //f. allow access to the login API.
-                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()                         //g. allow request to our webhook.
-                        .requestMatchers(HttpMethod.POST, "/checkout/webhook").permitAll()
-                        .anyRequest().authenticated()                                                            //Any other request should be authenticated.
+                .authorizeHttpRequests(c -> {
+                    featureSecurityRules.forEach(r -> r.configure(c));                                //a. Ask each feature to configure its own rules and then restrict with b.
+                    c.anyRequest().authenticated();                                                              //b. Any other request should be authenticated.
+                    }
                 )
-                        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)   //order of how the filters should be called.
-                        .exceptionHandling(c ->{
-                            c.authenticationEntryPoint(
-                                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-                            c.accessDeniedHandler(((request, response, accessDeniedException) ->
-                                    response.setStatus(HttpStatus.FORBIDDEN.value())));
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)           //order of how the filters should be called.
+                .exceptionHandling(c ->{
+                    c.authenticationEntryPoint(
+                            new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                    c.accessDeniedHandler(((request, response, accessDeniedException) ->
+                            response.setStatus(HttpStatus.FORBIDDEN.value())));
                         });
 
         return http.build();
-
     }
 }
